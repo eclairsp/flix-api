@@ -128,6 +128,22 @@ router.get("/user/me", auth, async (req, res) => {
     res.send({user: await req.user.getPublicProfile()});
 });
 
+router.get("/user/:username", async (req, res) => {
+    const username = req.params.username;
+
+    try {
+        const user = await User.find({username: username});
+        console.log(user);
+        if (!user[0]) {
+            throw new Error("No user found");
+        }
+
+        res.send();
+    } catch (error) {
+        res.status(404).send();
+    }
+});
+
 router.delete("/user/delete", auth, async (req, res) => {
     const _id = req.user._id;
 
@@ -304,10 +320,9 @@ router.post(
 );
 
 router.get(
-    "/user/:id/avatar",
+    "/user/:username/avatar",
     async (req, res) => {
-        const username = req.params.id;
-        console.log(username);
+        const username = req.params.username;
 
         try {
             const user = await User.find({username: username});
