@@ -305,7 +305,10 @@ router.post(
     async (req, res) => {
         const buffer = await sharp(req.file.buffer)
             .resize({width: 250, height: 250})
-            .png()
+            .jpeg({
+                quality: 80,
+                chromaSubsampling: "4:4:4"
+            })
             .toBuffer();
         req.user.avatar = buffer;
         await req.user.save();
@@ -333,7 +336,10 @@ router.get(
                 throw new Error("No user found");
             }
 
-            res.set("Content-Type", "image/png");
+            res.set({
+                "Content-Type": "image/jpeg",
+                "Cache-Control": "max-age=2595000"
+            });
             res.send(user[0].avatar);
         } catch (error) {
             console.log(error);
